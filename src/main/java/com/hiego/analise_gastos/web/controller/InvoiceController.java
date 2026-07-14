@@ -2,6 +2,7 @@ package com.hiego.analise_gastos.web.controller;
 
 import com.hiego.analise_gastos.core.entity.Invoice;
 import com.hiego.analise_gastos.core.service.InvoiceService;
+import com.hiego.analise_gastos.core.service.utils.CategoryAnalysis;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,8 +25,8 @@ public class InvoiceController {
     }
 
     @GetMapping("/analise")
-    public ResponseEntity<String> analiseInvoice(@RequestParam String year,
-                                                 @RequestParam String month){
+    public ResponseEntity<CategoryAnalysis> analiseInvoice(@RequestParam String year,
+                                                           @RequestParam String month){
         return ResponseEntity.ok(service.analyzeInvoicesByMonth(year, month));
     }
 
