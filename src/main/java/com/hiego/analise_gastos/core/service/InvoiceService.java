@@ -158,7 +158,7 @@ public class InvoiceService {
 
             CategoryAnalysis categoryAnalysis = mapper.readValue(json, CategoryAnalysis.class);
 
-            if(monthlyAnalysisService.getByMonthAndYear(year, month) == null) {
+            if(monthlyAnalysisService.getByMonthAndYear(year, month).isEmpty()) {
                 monthlyAnalysisService.save(categoryAnalysis);
             }
 

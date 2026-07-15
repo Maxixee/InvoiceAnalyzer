@@ -6,6 +6,8 @@ import com.hiego.analise_gastos.core.service.mapper.MonthlyAnalysisMapper;
 import com.hiego.analise_gastos.core.service.utils.CategoryAnalysis;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class MonthlyAnalysisService {
 
@@ -22,7 +24,7 @@ public class MonthlyAnalysisService {
         return repository.save(monthly);
     }
 
-    public MonthlyAnalysis getByMonthAndYear(String year, String month){
+    public List<MonthlyAnalysis> getByMonthAndYear(String year, String month){
         return repository.findByYearAndMonth(year, month);
     }
 }
