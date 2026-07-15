@@ -26,13 +26,15 @@ import java.util.List;
 public class InvoiceService {
 
     private final InvoiceRepository repository;
-    private final ChatModel chatModel;
     private final MonthlyAnalysisService monthlyAnalysisService;
+    private final GPTService gpt;
+    private final ObjectMapper mapper;
 
-    public InvoiceService(InvoiceRepository repository, ChatModel chatModel, MonthlyAnalysisService monthlyAnalysisService) {
+    public InvoiceService(InvoiceRepository repository, MonthlyAnalysisService monthlyAnalysisService, GPTService gpt, ObjectMapper mapper) {
         this.repository = repository;
-        this.chatModel = chatModel;
         this.monthlyAnalysisService = monthlyAnalysisService;
+        this.gpt = gpt;
+        this.mapper = mapper;
     }
 
     public String upload(MultipartFile file) throws IOException {
@@ -143,18 +145,9 @@ public class InvoiceService {
                     month
             );
 
-            ChatResponse response = chatModel.call(
-                    new Prompt(
-                            prompt,
-                            OpenAiChatOptions.builder()
-                                    .model("gpt-4o")
-                                    .temperature(0.4)
-                                    .build()
-                    ));
+            ChatResponse response = gpt.callingGPTapi(prompt);
 
             String json = response.getResult().getOutput().getText();
-
-            ObjectMapper mapper = new ObjectMapper();
 
             CategoryAnalysis categoryAnalysis = mapper.readValue(json, CategoryAnalysis.class);
 
