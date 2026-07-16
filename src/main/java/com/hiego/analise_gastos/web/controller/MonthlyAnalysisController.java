@@ -5,6 +5,7 @@ import com.hiego.analise_gastos.core.service.MonthlyAnalysisService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @CrossOrigin(origins = "*")
@@ -23,6 +24,17 @@ public class MonthlyAnalysisController {
                                                                         @RequestParam String month){
         return ResponseEntity.ok(service.getByMonthAndYear(year, month));
     }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<MonthlyAnalysis>> getAll(){
+        return ResponseEntity.ok(service.getAll());
+    }
+
+    @GetMapping("/all-stats")
+    public ResponseEntity<MonthlyAnalysis> getAllStats(){
+        return ResponseEntity.ok(service.getAllStats());
+    }
+
 
     @GetMapping("/compare")
     public ResponseEntity<String> compareTwoMonths(@RequestParam String year1,

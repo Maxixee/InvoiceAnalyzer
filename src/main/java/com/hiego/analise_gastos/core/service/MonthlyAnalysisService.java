@@ -6,7 +6,9 @@ import com.hiego.analise_gastos.core.entity.MonthlyAnalysis;
 import com.hiego.analise_gastos.core.repository.MontlyAnalysisRepository;
 import com.hiego.analise_gastos.core.service.mapper.MonthlyAnalysisMapper;
 import com.hiego.analise_gastos.core.service.utils.CategoryAnalysis;
+import jakarta.persistence.Column;
 import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,6 +38,39 @@ public class MonthlyAnalysisService {
         return repository.findByYearAndMonth(year, month);
     }
 
+    public List<MonthlyAnalysis> getAll(){
+        return repository.findAll();
+    }
+
+    public MonthlyAnalysis getAllStats() {
+
+        MonthlyAnalysis summary = new MonthlyAnalysis();
+        summary.setDate("Resumo geral");
+        summary.setEntretenimento(0.0);
+        summary.setAlimentacao(0.0);
+        summary.setEstudos(0.0);
+        summary.setSaude(0.0);
+        summary.setTransporte(0.0);
+        summary.setOutros(0.0);
+        summary.setTotal(0.0);
+
+        for (MonthlyAnalysis month : getAll()) {
+            summary.setEntretenimento(summary.getEntretenimento() + month.getEntretenimento());
+            summary.setAlimentacao(summary.getAlimentacao() + month.getAlimentacao());
+            summary.setEstudos(summary.getEstudos() + month.getEstudos());
+            summary.setSaude(summary.getSaude() + month.getSaude());
+            summary.setTransporte(summary.getTransporte() + month.getTransporte());
+            summary.setOutros(summary.getOutros() + month.getOutros());
+            summary.setTotal(summary.getTotal() + month.getTotal());
+        }
+
+        return summary;
+    }
+
+    @Cacheable(
+            value = "compare-month",
+            key = "#year1 + '-' + #month1 + '/' + #year2 + '-' + #month2"
+    )
     public String compareWithOtherMonth(String year1, String month1, String year2, String month2){
         Optional<MonthlyAnalysis> analysis1 = repository.findByYearAndMonth(year1, month1);
         Optional<MonthlyAnalysis> analysis2 = repository.findByYearAndMonth(year2, month2);
